@@ -6,15 +6,13 @@ import Column from "../components/Column";
 import Logo from "../components/Logo";
 import Button from "../components/Button";
 import SignInForm from "../sections/auth/signin/SignInForm";
-
-const LoginWrapper = styled(Layout)`
+const LayoutStyled = styled(Layout)`
   background-image: url(${backgroundImage});
   height: 100vh;
   display: flex;
   justify-content: center;
 `;
-
-const LoginContainer = styled.div`
+const DivContainerOneStyled = styled.div`
   border-radius: 10px;
   box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px,
     rgba(0, 0, 0, 0.22) 0px 15px 12px;
@@ -22,47 +20,40 @@ const LoginContainer = styled.div`
   width: 85%;
   height: 75vh;
 `;
-
-const ColTwo = styled(Col)`
+const ColStyled = styled(Col)`
   width: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
 `;
-
-const SignInFormContainer = styled.div`
+const DivContainerTwoStyled = styled.div`
   width: 50%;
 `;
-
-const OrContainer = styled.div`
+const DivContainerThreeStyled = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
 `;
-
-const LineLeft = styled.div`
+const DivContainerFourStyled = styled.div`
   width: 15%;
   height: 1px;
   background: #fff;
   display: inline-block;
 `;
-
-const OrText = styled.span`
+const SpanStyled = styled.span`
   color: #fff;
   padding: 0 5px 0 5px;
 `;
-
-const LineRight = styled.div`
+const DivContainerFiveStyled = styled.div`
   width: 15%;
   height: 1px;
   background: #fff;
   display: inline-block;
 `;
-
 export default function SignIn() {
   return (
-    <LoginWrapper>
-      <LoginContainer>
+    <LayoutStyled>
+      <DivContainerOneStyled>
         <Row>
           <Col span={12}>
             <Column
@@ -95,19 +86,19 @@ export default function SignIn() {
               <Button title="Sign Up" />
             </Column>
           </Col>
-          <ColTwo span={12}>
-            <SignInFormContainer>
+          <ColStyled span={12}>
+            <DivContainerTwoStyled>
               <SignInForm />
-              <OrContainer>
-                <LineLeft />
-                <OrText>Or</OrText>
-                <LineRight />
-              </OrContainer>
+              <DivContainerThreeStyled>
+                <DivContainerFourStyled />
+                <SpanStyled>Or</SpanStyled>
+                <DivContainerFiveStyled />
+              </DivContainerThreeStyled>
               <Button icon={<GoogleOutlined />} title="Sign in with Google" />
-            </SignInFormContainer>
-          </ColTwo>
+            </DivContainerTwoStyled>
+          </ColStyled>
         </Row>
-      </LoginContainer>
-    </LoginWrapper>
+      </DivContainerOneStyled>
+    </LayoutStyled>
   );
 }

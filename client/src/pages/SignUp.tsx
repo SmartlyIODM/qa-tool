@@ -5,15 +5,13 @@ import Column from "../components/Column";
 import Logo from "../components/Logo";
 import Button from "../components/Button";
 import SignUpForm from "../sections/auth/signup/SignUpForm";
-
-const LoginWrapper = styled(Layout)`
+const LayoutStyled = styled(Layout)`
   background-image: url(${backgroundImage});
   height: 100vh;
   display: flex;
   justify-content: center;
 `;
-
-const LoginContainer = styled.div`
+const DivStyled = styled.div`
   border-radius: 10px;
   box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px,
     rgba(0, 0, 0, 0.22) 0px 15px 12px;
@@ -21,11 +19,10 @@ const LoginContainer = styled.div`
   width: 85%;
   height: 75vh;
 `;
-
 export default function SignUp() {
   return (
-    <LoginWrapper>
-      <LoginContainer>
+    <LayoutStyled>
+      <DivStyled>
         <Row>
           <Col span={12}>
             <SignUpForm />
@@ -62,7 +59,7 @@ export default function SignUp() {
             </Column>
           </Col>
         </Row>
-      </LoginContainer>
-    </LoginWrapper>
+      </DivStyled>
+    </LayoutStyled>
   );
 }

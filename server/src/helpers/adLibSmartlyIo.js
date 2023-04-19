@@ -276,6 +276,11 @@ const postTemplateVersion = async (req, res) => {
       templateId: req.templateId,
       variants: req.variants,
     };
+    TemplateVersion.deleteMany({}, (err) => {
+        if (err) {
+            res.status(500).send({error: err});           
+        }
+    });
     const tempalateVersion = new TemplateVersion(templatesVersions);
     tempalateVersion.save((err) => {
       if (err) return res.status(400).json({ templatesVersions: err });
@@ -307,10 +312,10 @@ const postTemplateVersionCloud = async (req, res) => {
                 // ),
                 entry.getData().toString("utf8").split("</html>").join(`<script>
                     window.addEventListener("message", (event) => {
-                      if (typeof event.data === "object") {
-                        defaultValues = event.data;
+                      if (typeof event.data.data === "object") {
+                        defaultValues = event.data.data;
                       } else {
-                        if (event.data === "pause") {
+                        if (event.data.data === "pause") {
                           gwd.auto_PauseBtnClick();
                         } else {
                           gwd.auto_PlayBtnClick();

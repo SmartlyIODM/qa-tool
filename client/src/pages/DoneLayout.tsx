@@ -855,7 +855,6 @@ export default function DoneLayout() {
                 });
                 _setTemplates(__templates);
                 setIndex(__templates.length - 1);
-                console.log(__templates, " ", __templates.length - 1);
               }}
             >
               Done

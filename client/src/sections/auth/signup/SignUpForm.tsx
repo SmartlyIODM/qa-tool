@@ -1,6 +1,7 @@
 import { Layout, Form, Button, Input, notification } from "antd";
 import {
   MailOutlined,
+  UserOutlined,
   LockOutlined,
   EyeOutlined,
   EyeInvisibleOutlined,
@@ -8,32 +9,14 @@ import {
 import styled from "styled-components";
 import { useState } from "react";
 import apiService from "../../../api/apiService";
-
-const SignUpFormWrapper = styled(Layout)`
+const LayoutStyled = styled(Layout)`
   background: transparent;
   width: 50%;
   height: auto;
   margin: 25vh auto;
   padding: 10px;
 `;
-
-const SignUpFormInputIconMailOutlined = styled(MailOutlined)`
-  color: rgba(203, 43, 134, 1);
-`;
-
-const SignUpFormInputIconLockOutlined = styled(LockOutlined)`
-  color: rgba(203, 43, 134, 1);
-`;
-
-const SignUpFormInputIconEyeOutlined = styled(EyeOutlined)`
-  color: rgba(203, 43, 134, 1);
-`;
-
-const SignUpFormInputIconEyeInvisibleOutlined = styled(EyeInvisibleOutlined)`
-  color: rgba(203, 43, 134, 1);
-`;
-
-const SignUpFormInputUsernamePassword = styled(Input)`
+const InputStyled = styled(Input)`
   &.ant-input-affix-wrapper {
     border-color: transparent;
   }
@@ -41,8 +24,22 @@ const SignUpFormInputUsernamePassword = styled(Input)`
     border-color: transparent !important;
   }
 `;
-
-const SignUpFormButton = styled(Button)`
+const MailOutlinedStyled = styled(MailOutlined)`
+  color: rgba(203, 43, 134, 1);
+`;
+const UserOutlinedStyled = styled(UserOutlined)`
+  color: rgba(203, 43, 134, 1);
+`;
+const LockOutlinedStyled = styled(LockOutlined)`
+  color: rgba(203, 43, 134, 1);
+`;
+const EyeOutlinedStyled = styled(EyeOutlined)`
+  color: rgba(203, 43, 134, 1);
+`;
+const EyeInvisibleOutlinedStyled = styled(EyeInvisibleOutlined)`
+  color: rgba(203, 43, 134, 1);
+`;
+const ButtonStyled = styled(Button)`
   width: 100%;
   border-radius: 20px;
   background: linear-gradient(
@@ -63,16 +60,12 @@ const SignUpFormButton = styled(Button)`
     transition: none !important;
   }
 `;
-
 export default function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false);
-
   const [api, contextHolder] = notification.useNotification();
-
   const handleShowPassword = () => {
     setShowPassword((show) => !show);
   };
-
   const onFinish = async (values) => {
     try {
       const request = await apiService.post("/signup", values);
@@ -88,9 +81,8 @@ export default function SignUpForm() {
       });
     }
   };
-
   return (
-    <SignUpFormWrapper>
+    <LayoutStyled>
       {contextHolder}
       <Form
         name="Sign Up"
@@ -112,9 +104,23 @@ export default function SignUpForm() {
             },
           ]}
         >
-          <SignUpFormInputUsernamePassword
-            prefix={<SignUpFormInputIconMailOutlined />}
+          <InputStyled
+            prefix={<MailOutlinedStyled />}
             placeholder="Email"
+          />
+        </Form.Item>
+        <Form.Item
+          name="fullName"
+          rules={[
+            {
+              required: true,
+              message: "Please input your Full Name!",
+            },
+          ]}
+        >
+          <InputStyled
+            prefix={<UserOutlinedStyled />}
+            placeholder="Full Name"
           />
         </Form.Item>
         <Form.Item
@@ -126,15 +132,15 @@ export default function SignUpForm() {
             },
           ]}
         >
-          <SignUpFormInputUsernamePassword
+          <InputStyled
             type={showPassword ? "text" : "password"}
             placeholder="Password"
-            prefix={<SignUpFormInputIconLockOutlined />}
+            prefix={<LockOutlinedStyled />}
             suffix={
               showPassword ? (
-                <SignUpFormInputIconEyeOutlined onClick={handleShowPassword} />
+                <EyeOutlinedStyled onClick={handleShowPassword} />
               ) : (
-                <SignUpFormInputIconEyeInvisibleOutlined
+                <EyeInvisibleOutlinedStyled
                   onClick={handleShowPassword}
                 />
               )
@@ -142,11 +148,11 @@ export default function SignUpForm() {
           />
         </Form.Item>
         <Form.Item>
-          <SignUpFormButton type="primary" htmlType="submit">
+          <ButtonStyled type="primary" htmlType="submit">
             Sign Up
-          </SignUpFormButton>
+          </ButtonStyled>
         </Form.Item>
       </Form>
-    </SignUpFormWrapper>
+    </LayoutStyled>
   );
 }

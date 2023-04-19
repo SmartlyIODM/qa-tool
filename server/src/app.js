@@ -15,7 +15,8 @@ const passport = require("passport");
 mongoose.set("strictQuery", false);
 
 mongoose.connect(
-  "mongodb+srv://cloudmongodbadlibioqatool:cloudmongodbadlibioqatool@cluster0.xoiimct.mongodb.net/?retryWrites=true&w=majority"
+  // "mongodb+srv://cloudmongodbadlibioqatool:cloudmongodbadlibioqatool@cluster0.xoiimct.mongodb.net/?retryWrites=true&w=majority"
+  "mongodb+srv://dennymarcmaquiling:QBTvG1C2ma0LoF0j@cluster0.86cfluf.mongodb.net/?retryWrites=true&w=majority"
 );
 
 const app = express();

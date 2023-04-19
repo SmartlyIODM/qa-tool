@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import {
   PlaySquareOutlined,
@@ -19,6 +19,9 @@ import {
   FileImageOutlined,
   BgColorsOutlined,
   FontSizeOutlined,
+  PlayCircleFilled,
+  PauseCircleFilled,
+  ReloadOutlined,
 } from "@ant-design/icons";
 import { Badge, Card, Col, Menu, Row, Space, Typography } from "antd";
 import type { MenuProps, MenuTheme } from "antd/es/menu";
@@ -29,6 +32,7 @@ import { getTemplatesVersions } from "../features/templateVersion/templateVersio
 import { useSelector, useDispatch } from "react-redux";
 import { motion, AnimatePresence } from "framer-motion";
 import { Collapse } from "antd";
+import Timer from "../components/Timer";
 type MenuItem = Required<MenuProps>["items"][number];
 function getItem(
   label: React.ReactNode,
@@ -218,6 +222,9 @@ const ConceptTemplateVersionLayout: React.FC = () => {
   const [templateId, setTemplateId] = useState<string>("");
   const [play, setPlay] = useState<boolean>(false);
   const [variantPlay, setVarianPlay] = useState<any>({});
+  const [refresh, setRefresh] = useState<number>(0);
+  const [isPause, setPause] = useState<boolean>(true);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
   const items: MenuItem[] = [
     getItem(
       <Space>Pame Brilliance</Space>,
@@ -264,8 +271,8 @@ const ConceptTemplateVersionLayout: React.FC = () => {
   };
   const handleClickPlay = (i: number, variants: any) => {
     setVarianPlay({
+      variantIndex: i,
       variants: variants,
-      variant: variants?.variants[i],
     });
     setPlay(!play);
   };
@@ -336,32 +343,33 @@ const ConceptTemplateVersionLayout: React.FC = () => {
   );
   const onLoad = (e: any, data: any) => {
     e.preventDefault();
-    setTimeout(() => {
-      window.addEventListener(
-        "message",
-        (event) => {
-          console.log(event?.data);
-          switch (event?.data?.type) {
-            case "SCREENSHOT_START":
-            case "SCREENSHOT":
-              break;
-            case "SCREENSHOT_STOP":
-              break;
-            default:
-              console.log(event?.data?.type);
-              break;
-          }
-        },
-        false
-      );
-      e.target.contentWindow.postMessage(
-        {
-          data,
-          type: "setDefaultValues",
-        },
-        e.target.src
-      );
-    }, 1000);
+    window.addEventListener(
+      "message",
+      (event) => {
+        switch (event?.data?.type) {
+          case "SCREENSHOT_START":
+            console.log("DEBUG SCREENSHOT_START");
+            break;
+          case "SCREENSHOT":
+            console.log("DEBUG SCREENSHOT");
+            break;
+          case "SCREENSHOT_STOP":
+            console.log("DEBUG SCREENSHOT_STOP");
+            break;
+          default:
+            console.log("DEBUG default", event?.data?.type);
+            break;
+        }
+      },
+      false
+    );
+    e.target.contentWindow.postMessage(
+      {
+        data,
+        type: "setDefaultValues",
+      },
+      e.target.src
+    );
     document.addEventListener("visibilitychange", () => {
       console.log("");
     });
@@ -428,9 +436,9 @@ const ConceptTemplateVersionLayout: React.FC = () => {
                   })[0].name}
               </Space>
               {variants &&
-                (play ? (
-                  <></>
-                ) : (
+                // (play ? (
+                //   <></>
+                // ) : (
                   <>
                     <Space
                       style={{
@@ -492,7 +500,8 @@ const ConceptTemplateVersionLayout: React.FC = () => {
                     </Space>
                     <Space style={{ clear: "both" }}></Space>
                   </>
-                ))}
+                // ))
+                }
             </div>
           </Space>
           {play ? (
@@ -539,6 +548,17 @@ const ConceptTemplateVersionLayout: React.FC = () => {
                         overflow: "scroll",
                       }}
                     >
+                      <div style={{
+                        borderRadius: "8px 8px 0 0",
+                        background: "linear-gradient( 90.03deg, rgb(242,32,118) 0.03%, rgb(41,18,95) 100.05% )",
+                        display: "flex",
+                        justifyContent: "center",
+                        margin: "0px 20px 24px"
+                      }}>
+                        <Space style={{color: "#FFF"}}>
+                          {variantPlay.variants.variants[variantPlay.variantIndex].variantName}
+                        </Space>
+                      </div>
                       <Space
                         style={{
                           justifyContent: "center",
@@ -546,30 +566,64 @@ const ConceptTemplateVersionLayout: React.FC = () => {
                         }}
                       >
                         <iframe
-                          key={0}
-                          width={variantPlay.variant?.size.split("x")[0]}
-                          height={variantPlay.variant?.size.split("x")[1]}
-                          src={`https://storage.googleapis.com/creative-templates/${variantPlay.variants?._id}/${variantPlay.variant?.size}-${variantPlay.variant?.templateName}/index.html`}
+                          ref={iframeRef}
+                          key={refresh}
+                          width={variantPlay.variants.variants[variantPlay.variantIndex].size.split("x")[0]}
+                          height={variantPlay.variants.variants[variantPlay.variantIndex].size.split("x")[1]}
+                          src={`https://storage.googleapis.com/creative-templates/${variantPlay.variants._id}/${variantPlay.variants.variants[variantPlay.variantIndex].size}-${variantPlay.variants.variants[variantPlay.variantIndex]?.templateName}/index.html`}
                           // title={name}
                           onLoad={(e) =>
-                            onLoad(e, variantPlay.variant?.defaultValues)
+                            onLoad(e, variantPlay.variants.variants[variantPlay.variantIndex].defaultValues)
                           }
                         />
                       </Space>
-                      {/* <Space.Compact
+                      <Space.Compact
                         block
                         style={{
-                          margin: "20px 20px",
+                          margin: "20px 0",
                           justifyContent: "center",
                         }}
                       >
-                        <Space.Compact
-                          block
-                          style={{ width: 50, backgroundColor: "red" }}
+                        <Space
                         >
-                          asdf
-                        </Space.Compact>
-                      </Space.Compact> */}
+                          <PlayCircleFilled style={{
+                            color: "rgb(242,32,118)",
+                            fontSize: 24
+                          }} onClick={() => {
+                            let data = "play";
+                              const iframe = iframeRef.current;
+                              if (iframe) {
+                                 iframe?.contentWindow?.postMessage(
+                                  {
+                                    data,
+                                    type: "setDefaultValues",
+                                  },
+                                  iframe.src
+                                );
+                              }
+                          }} />
+                          <PauseCircleFilled style={{
+                            color: "rgb(242,32,118)",
+                            fontSize: 24
+                          }} onClick={() => {
+                              let data = "pause";
+                              const iframe = iframeRef.current;
+                              if (iframe) {
+                                 iframe?.contentWindow?.postMessage(
+                                  {
+                                    data,
+                                    type: "setDefaultValues",
+                                  },
+                                  iframe.src
+                                );
+                              }
+                          }} />
+                          <ReloadOutlined style={{
+                            color: "rgb(242,32,118)",
+                            fontSize: 24
+                          }} onClick={() => setRefresh(refresh + 1)} />
+                        </Space>
+                      </Space.Compact>
                       <div style={{ margin: "0 20px", marginBottom: 24 }}>
                         <CollapseStyled
                           bordered={false}
@@ -611,7 +665,7 @@ const ConceptTemplateVersionLayout: React.FC = () => {
                                   >
                                     {
                                       Object.keys(
-                                        variantPlay.variant?.defaultValues
+                                        variantPlay.variants.variants[variantPlay.variantIndex].defaultValues
                                       ).length
                                     }{" "}
                                     Dynamic elements
@@ -621,7 +675,7 @@ const ConceptTemplateVersionLayout: React.FC = () => {
                               >
                                 <>
                                   {Object.entries(
-                                    variantPlay.variant?.defaultValues
+                                    variantPlay.variants.variants[variantPlay.variantIndex].defaultValues
                                   )
                                     .sort()
                                     .map(([key, value]: any) => (
@@ -735,7 +789,7 @@ const ConceptTemplateVersionLayout: React.FC = () => {
                 </div>
                 <ContentStyled
                   style={{
-                    margin: "24px 16px 0",
+                    margin: "24px 16px",
                     overflowY: "scroll",
                   }}
                 >
@@ -796,15 +850,65 @@ const ConceptTemplateVersionLayout: React.FC = () => {
                                 </div>
                               }
                               cover={
-                                <div
-                                  style={{
-                                    height: 210,
-                                    overflow: "hidden",
-                                    position: "relative",
-                                    background:
-                                      "linear-gradient(90.03deg, rgb(242, 32, 118) 0.03%, rgb(41, 18, 95) 100.05%)",
-                                  }}
-                                >
+                                // <div
+                                //   style={{
+                                //     height: 210,
+                                //     overflow: "hidden",
+                                //     position: "relative",
+                                //     background:
+                                //       "linear-gradient(90.03deg, rgb(242, 32, 118) 0.03%, rgb(41, 18, 95) 100.05%)",
+                                //   }}
+                                // >
+                                //   <iframe
+                                //     width={
+                                //       templates
+                                //         .filter((template: { _id: string }) => {
+                                //           return template._id === templateId;
+                                //         })[0]
+                                //         .size.split("x")[0] > 464
+                                //         ? 464
+                                //         : templates
+                                //             .filter(
+                                //               (template: { _id: string }) => {
+                                //                 return (
+                                //                   template._id === templateId
+                                //                 );
+                                //               }
+                                //             )[0]
+                                //             .size.split("x")[0]
+                                //     }
+                                //     height={420}
+                                //     src={`https://storage.googleapis.com/creative-templates/${
+                                //       variants?._id
+                                //     }/${
+                                //       templates.filter(
+                                //         (template: { _id: string }) => {
+                                //           return template._id === templateId;
+                                //         }
+                                //       )[0].size +
+                                //       "-" +
+                                //       templates.filter(
+                                //         (template: { _id: string }) => {
+                                //           return template._id === templateId;
+                                //         }
+                                //       )[0].name
+                                //     }/index.html`}
+                                //     style={{
+                                //       transform:
+                                //         "scale(0.5) translate(-50%, -50%)",
+                                //       position: "absolute",
+                                //       top: "50%",
+                                //       left: "50%",
+                                //       transformOrigin: "0 0",
+                                //     }}
+                                //   />
+                                // </div>
+                                <div style={{
+                                  height: 210,
+                                  overflow: "hidden",
+                                  background: "linear-gradient(90.03deg, rgb(242, 32, 118) 0.03%, rgb(41, 18, 95) 100.05%)",
+                                  position: "relative",
+                                }}>
                                   <iframe
                                     width={
                                       templates
@@ -823,7 +927,23 @@ const ConceptTemplateVersionLayout: React.FC = () => {
                                             )[0]
                                             .size.split("x")[0]
                                     }
-                                    height={420}
+                                    height={
+                                      templates
+                                        .filter((template: { _id: string }) => {
+                                          return template._id === templateId;
+                                        })[0]
+                                        .size.split("x")[0] > 464
+                                        ? 464
+                                        : templates
+                                            .filter(
+                                              (template: { _id: string }) => {
+                                                return (
+                                                  template._id === templateId
+                                                );
+                                              }
+                                            )[0]
+                                            .size.split("x")[1]
+                                    }
                                     src={`https://storage.googleapis.com/creative-templates/${
                                       variants?._id
                                     }/${
@@ -851,14 +971,14 @@ const ConceptTemplateVersionLayout: React.FC = () => {
                                 </div>
                               }
                               actions={[
-                                <Space
-                                  style={{
-                                    fontWeight: "400",
-                                    fontSize: 16,
-                                  }}
-                                >
-                                  01:15
-                                </Space>,
+                                // <Space
+                                //   style={{
+                                //     fontWeight: "400",
+                                //     fontSize: 16,
+                                //   }}
+                                // >
+                                  <Timer />,
+                                // </Space>,
                                 <EditOutlined
                                   style={{ color: "#1890FF", fontSize: 10 }}
                                 />,

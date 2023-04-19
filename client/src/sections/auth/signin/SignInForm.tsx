@@ -10,28 +10,27 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { signIn } from "../../../features/auth/authSlice";
-// import apiService from "../../../api/apiService";
-const SignInFormWrapper = styled(Layout)`
+const LayoutStyled = styled(Layout)`
   background: transparent;
 `;
-const SignInFormItem = styled(Form.Item)`
+const FormItemStyled = styled(Form.Item)`
   &:last-child {
     margin-bottom: 5px;
   }
 `;
-const SignInFormInputIconMailOutlined = styled(MailOutlined)`
+const MailOutlinedStyled = styled(MailOutlined)`
   color: rgba(203, 43, 134, 1);
 `;
-const SignInFormInputIconLockOutlined = styled(LockOutlined)`
+const LockOutlinedStyled = styled(LockOutlined)`
   color: rgba(203, 43, 134, 1);
 `;
-const SignInFormInputIconEyeOutlined = styled(EyeOutlined)`
+const EyeOutlinedStyled = styled(EyeOutlined)`
   color: rgba(203, 43, 134, 1);
 `;
-const SignInFormInputIconEyeInvisibleOutlined = styled(EyeInvisibleOutlined)`
+const EyeInvisibleOutlinedStyled = styled(EyeInvisibleOutlined)`
   color: rgba(203, 43, 134, 1);
 `;
-const SignInFormInputUsernamePassword = styled(Input)`
+const InputStyled = styled(Input)`
   &.ant-input-affix-wrapper {
     border-color: transparent;
   }
@@ -39,7 +38,7 @@ const SignInFormInputUsernamePassword = styled(Input)`
     border-color: transparent !important;
   }
 `;
-const SignInFormCheckbox = styled(Checkbox)`
+const CheckboxStyled = styled(Checkbox)`
   color: #fff;
   &.ant-checkbox-wrapper:not(.ant-checkbox-wrapper-disabled):hover
     .ant-checkbox-inner {
@@ -67,7 +66,7 @@ const SignInFormCheckbox = styled(Checkbox)`
     border-color: transparent;
   }
 `;
-const SignInFormButton = styled(Button)`
+const ButtonStyled = styled(Button)`
   width: 100%;
   border-radius: 20px;
   background: linear-gradient(
@@ -97,13 +96,12 @@ const SignInForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [api, contextHolder] = notification.useNotification();
   useEffect(() => {
-    console.log(user, isLoading, isError, isSuccess, message);
     if (isLoading) {
       api["success"]({
         message: "Sign In Successfully",
         description: "You are successfully sign in!",
       });
-      navigate("/");
+      navigate("/configure/generate");
     } else if (message)
       api["error"]({
         message: message,
@@ -117,7 +115,7 @@ const SignInForm = () => {
     dispatch(signIn(values));
   };
   return (
-    <SignInFormWrapper>
+    <LayoutStyled>
       {contextHolder}
       <Form
         name="Sign In"
@@ -126,7 +124,7 @@ const SignInForm = () => {
         }}
         onFinish={onFinish}
       >
-        <SignInFormItem
+        <FormItemStyled
           name="email"
           rules={[
             {
@@ -139,12 +137,12 @@ const SignInForm = () => {
             },
           ]}
         >
-          <SignInFormInputUsernamePassword
-            prefix={<SignInFormInputIconMailOutlined />}
+          <InputStyled
+            prefix={<MailOutlinedStyled />}
             placeholder="Email"
           />
-        </SignInFormItem>
-        <SignInFormItem
+        </FormItemStyled>
+        <FormItemStyled
           name="password"
           rules={[
             {
@@ -153,33 +151,33 @@ const SignInForm = () => {
             },
           ]}
         >
-          <SignInFormInputUsernamePassword
+          <InputStyled
             type={showPassword ? "text" : "password"}
             placeholder="Password"
-            prefix={<SignInFormInputIconLockOutlined />}
+            prefix={<LockOutlinedStyled />}
             suffix={
               showPassword ? (
-                <SignInFormInputIconEyeOutlined onClick={handleShowPassword} />
+                <EyeOutlinedStyled onClick={handleShowPassword} />
               ) : (
-                <SignInFormInputIconEyeInvisibleOutlined
+                <EyeInvisibleOutlinedStyled
                   onClick={handleShowPassword}
                 />
               )
             }
           />
-        </SignInFormItem>
-        <SignInFormItem>
+        </FormItemStyled>
+        <FormItemStyled>
           <Form.Item name="remember" valuePropName="checked" noStyle>
-            <SignInFormCheckbox>Remember me</SignInFormCheckbox>
+            <CheckboxStyled>Remember me</CheckboxStyled>
           </Form.Item>
-        </SignInFormItem>
-        <SignInFormItem>
-          <SignInFormButton type="primary" htmlType="submit">
+        </FormItemStyled>
+        <FormItemStyled>
+          <ButtonStyled type="primary" htmlType="submit">
             Sign In
-          </SignInFormButton>
-        </SignInFormItem>
+          </ButtonStyled>
+        </FormItemStyled>
       </Form>
-    </SignInFormWrapper>
+    </LayoutStyled>
   );
 };
 

@@ -20,7 +20,7 @@ export default function Router() {
       path: "/",
       element: <DashboardLayout />,
       children: [
-        { element: <Navigate to="/configure/generate" />, index: true },
+        { element: <Navigate to="/signin" />, index: true },
         { path: "configure/generate", element: <ConfigureLayout /> },
         { path: "configure/generate/elements", element: <ElementsLayout /> },
         {
